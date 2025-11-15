@@ -3,7 +3,7 @@ A simple web-based tool to manage and organize your contact list.
 
 ## Link
 - URL Deployment:
-- Repository :
+- Repository:
 
 ## Main Features
 - Add new contacts

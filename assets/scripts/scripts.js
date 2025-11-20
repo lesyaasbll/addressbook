@@ -1,17 +1,17 @@
 const contacts = [
   {
     id: 1,
-    Name: "Lesya Salsabilla Putri",
-    Phone: 62881080070700,
-    Email: "lesyabilla81@gmail.com",
-    Location: "Jakarta",
+    name: "Lesya Salsabilla Putri",
+    phone: 62881080070700,
+    email: "lesyabilla81@gmail.com",
+    location: "Jakarta",
   },
   {
     id: 2,
-    Name: "Zhidane Fachri Ramadhan",
-    Phone: 62881080080800,
-    Email: "zhidane28@gmail.com",
-    Location: "Bandung",
+    name: "Zhidane Fachri Ramadhan",
+    phone: 62881080080800,
+    email: "zhidane28@gmail.com",
+    location: "Bandung",
   },
 ];
 

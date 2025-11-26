@@ -15,4 +15,11 @@ const contacts = [
   },
 ];
 
-console.log(contacts);
+function displayContacts() {
+  for (let index = 0; index < contacts.length; index++) {
+    const contact = contacts[index];
+    console.log(contact);
+  }
+}
+
+displayContacts();

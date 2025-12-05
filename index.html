@@ -11,7 +11,7 @@
   </head>
 
   <body
-    class="p-6 bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50 min-h-screen"
+    class="p-4 sm:p-6 bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50 min-h-screen"
   >
     <header class="mb-6">
       <h1 class="text-3xl font-bold text-purple-700 drop-shadow-sm">
@@ -19,45 +19,50 @@
       </h1>
     </header>
 
-    <div class="flex justify-between items-center mb-4">
-      <div class="space-x-2">
+    <!-- BUTTONS + SEARCH -->
+    <div class="flex flex-wrap justify-between items-center mb-4 gap-3">
+      <div class="flex flex-wrap gap-2 w-full sm:w-auto">
         <button
-          class="px-4 py-2 rounded-lg bg-gradient-to-r from-blue-300 to-blue-400 hover:from-blue-400 hover:to-blue-500 text-white shadow-md transition"
+          class="w-full sm:w-auto px-4 py-2 rounded-lg bg-gradient-to-r from-blue-300 to-blue-400 hover:from-blue-400 hover:to-blue-500 text-white shadow-md transition"
         >
-          + New
+          ➕ New
         </button>
 
         <button
-          class="px-4 py-2 rounded-lg bg-gradient-to-r from-purple-300 to-purple-400 hover:from-purple-400 hover:to-purple-500 text-white shadow-md transition"
+          class="w-full sm:w-auto px-4 py-2 rounded-lg bg-gradient-to-r from-purple-300 to-purple-400 hover:from-purple-400 hover:to-purple-500 text-white shadow-md transition"
         >
-          Edit
+          ✏ Edit
         </button>
 
         <button
-          class="px-4 py-2 rounded-lg bg-gradient-to-r from-pink-300 to-pink-400 hover:from-pink-400 hover:to-pink-500 text-white shadow-md transition"
+          class="w-full sm:w-auto px-4 py-2 rounded-lg bg-gradient-to-r from-pink-300 to-pink-400 hover:from-pink-400 hover:to-pink-500 text-white shadow-md transition"
         >
-          Delete
+          🗑 Delete
         </button>
       </div>
 
-      <div class="flex items-center space-x-2">
+      <!-- SEARCH BAR -->
+      <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
         <input
           type="text"
           placeholder="Search..."
-          class="border border-purple-200 px-4 py-2 rounded-full focus:ring-2 focus:ring-purple-300 shadow-sm"
+          class="w-full sm:w-auto border border-purple-200 px-4 py-2 rounded-full focus:ring-2 focus:ring-purple-300 shadow-sm"
         />
         <button
-          class="px-4 py-2 rounded-lg bg-gradient-to-r from-purple-300 to-purple-400 hover:from-purple-400 hover:to-purple-500 text-white shadow-md transition"
+          class="w-full sm:w-auto px-4 py-2 rounded-lg bg-gradient-to-r from-purple-300 to-purple-400 hover:from-purple-400 hover:to-purple-500 text-white shadow-md transition"
         >
-          Filter
+          🔍 Find
         </button>
       </div>
     </div>
 
+    <!-- TABLE -->
     <div
       class="overflow-x-auto shadow-lg rounded-xl bg-white/70 backdrop-blur-md border border-purple-100"
     >
-      <table class="min-w-full border border-purple-100 rounded-xl">
+      <table
+        class="min-w-full border border-purple-100 rounded-xl text-sm sm:text-base"
+      >
         <thead class="bg-purple-100 text-purple-700">
           <tr class="border-b border-purple-200">
             <th class="p-3 text-left"><input type="checkbox" /></th>

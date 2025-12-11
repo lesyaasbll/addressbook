@@ -30,16 +30,9 @@ function displayContacts() {
 
 // AUTO ID
 function getLastId() {
-  // STEP 1: CEK APAKAH DATACONTACTS KOSONG?
   if (contacts.length === 0) return 1;
-
-  // STEP 2: CARI INDEX (URUTAN) BARANG PALING TERAKHIR
   const lastIndex = contacts.length - 1;
-
-  //STEP 3: AMBIL OBJECT KONTAK YANG PALING TERAKHIR
   const lastContact = contacts[lastIndex];
-
-  //STEP 4: AMBIL ID-NYA, LALU TAMBAH 1
   return lastContact.id + 1;
 }
 
@@ -54,11 +47,20 @@ function addContact(name, phone, email, location) {
   });
 }
 
-// SEARCH CONTACT
+// SEARCH CONTACT (improved)
 function searchContacts(keyword) {
   const filteredContacts = contacts.filter(
-    (contact) => contact.name.toLowerCase() === keyword.toLowerCase()
+    (contact) =>
+      contact.name.toLowerCase().includes(keyword.toLowerCase()) ||
+      contact.email.toLowerCase().includes(keyword.toLowerCase()) ||
+      contact.location.toLowerCase().includes(keyword.toLowerCase()) ||
+      contact.phone.toString().includes(keyword)
   );
+
+  if (filteredContacts.length === 0) {
+    console.log(`🔍 No contact found for keyword: ${keyword}`);
+    return;
+  }
 
   for (const contact of filteredContacts) {
     console.log(`
@@ -71,16 +73,48 @@ function searchContacts(keyword) {
   }
 }
 
-function deleteContact() {
-  // TODO
+// DELETE CONTACT
+function deleteContact(id) {
+  const index = contacts.findIndex((c) => c.id === id);
+
+  if (index === -1) {
+    console.log(`❌ Contact with ID ${id} not found.`);
+    return;
+  }
+
+  contacts.splice(index, 1);
+  console.log(`🗑 Contact with ID ${id} has been deleted.`);
 }
 
-function updateContact() {
-  // TODO
+// UPDATE CONTACT
+function updateContact(id, newData) {
+  const contact = contacts.find((c) => c.id === id);
+
+  if (!contact) {
+    console.log(`❌ Contact with ID ${id} not found.`);
+    return;
+  }
+
+  contact.name = newData.name ?? contact.name;
+  contact.phone = newData.phone ?? contact.phone;
+  contact.email = newData.email ?? contact.email;
+  contact.location = newData.location ?? contact.location;
+
+  console.log(`✏️ Contact with ID ${id} updated successfully.`);
 }
 
 // TESTING
 addContact("Baskara Putra", 6281234567890, "baskara@gmail.com", "Jakarta");
 addContact("Baskara Putra", 6281234567890, "baskara@gmail.com", "Jakarta");
-// displayContacts();
-searchContacts("Baskara Putra");
+
+console.log("🔍 Searching:");
+searchContacts("Baskara");
+
+console.log("✏️ Updating ID 1:");
+updateContact(1, { name: "Lesya SP", location: "Depok" });
+
+console.log("🗑 Deleting ID 2:");
+deleteContact(2);
+
+console.log("📋 Display All Contacts:");
+displayContacts();

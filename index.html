@@ -179,59 +179,66 @@
     </div>
 
     <script>
-      let contacts = [];
+      // Data & Storage
+      let contacts = JSON.parse(localStorage.getItem("contacts")) || [];
       let selectedId = null;
+      
+      function saveContacts() {
+        localStorage.setItem("contacts", JSON.stringify(contacts));
+      }
 
+      // Elements 
       const tableBody = document.getElementById("tableBody");
       const btnEdit = document.getElementById("btnEdit");
       const btnDelete = document.getElementById("btnDelete");
 
-      function renderTable() {
+      // Render Table
+      function renderTable(data = contacts) {
         tableBody.innerHTML = "";
+        
+        if (data.length === 0) {
+          tableBody.innerHTML = `
+          <tr>
+            <td colspan="5" class="p-4 text-center text-purple-500 italic">
+            No contacts available
+          </td>
+        </tr>`;
+      return;
+    }
 
-        if (contacts.length === 0) {
-          tableBody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-purple-500 italic">No contacts available</td></tr>`;
-          return;
-        }
+    data.forEach((c) => {
+      const row = document.createElement("tr");
+      row.classList.add("hover:bg-purple-50", "transition");
 
-        contacts.forEach((c) => {
-          const row = document.createElement("tr");
-          row.classList.add("hover:bg-purple-50", "transition");
+      row.innerHTML = `
+        <td class="p-3">
+          <input type="checkbox" class="rowCheck" data-id="${c.id}">
+        </td>
+        <td class="p-3">${c.name}</td>
+        <td class="p-3">${c.phone}</td>
+        <td class="p-3">${c.email}</td>
+        <td class="p-3">${c.location}</td>
+      `;
 
-          row.innerHTML = `
-            <td class="p-3"><input type="checkbox" class="rowCheck" data-id="${c.id}"></td>
-            <td class="p-3">${c.name}</td>
-            <td class="p-3">${c.phone}</td>
-            <td class="p-3">${c.email}</td>
-            <td class="p-3">${c.location}</td>
-          `;
+      tableBody.appendChild(row);
+    });
 
-          tableBody.appendChild(row);
-        });
-
-        refreshButtons();
-      }
-
+    refreshButtons();
+  }
+      // Button State
       function refreshButtons() {
         const checked = document.querySelectorAll(".rowCheck:checked").length;
-
-        if (checked === 1) {
-          btnEdit.disabled = false;
-          btnEdit.classList.remove("opacity-50", "cursor-not-allowed");
-        } else {
-          btnEdit.disabled = true;
-          btnEdit.classList.add("opacity-50", "cursor-not-allowed");
-        }
-
-        if (checked > 0) {
-          btnDelete.disabled = false;
-          btnDelete.classList.remove("opacity-50", "cursor-not-allowed");
-        } else {
-          btnDelete.disabled = true;
-          btnDelete.classList.add("opacity-50", "cursor-not-allowed");
-        }
+        
+        btnEdit.disabled = checked !== 1;
+        btnDelete.disabled = checked === 0;
+        
+        btnEdit.classList.toggle("opacity-50", checked !== 1);
+        btnEdit.classList.toggle("cursor-not-allowed", checked !== 1);
+        
+        btnDelete.classList.toggle("opacity-50", checked === 0);
+        btnDelete.classList.toggle("cursor-not-allowed", checked === 0);
       }
-
+      
       document.addEventListener("change", refreshButtons);
 
       // Modal
@@ -241,16 +248,16 @@
       const modalPhone = document.getElementById("modalPhone");
       const modalEmail = document.getElementById("modalEmail");
       const modalLocation = document.getElementById("modalLocation");
-
+      
       function openModal(edit = false) {
         modal.classList.remove("hidden");
         modalTitle.textContent = edit ? "Edit Contact" : "Add Contact";
-
+        
         if (edit) {
           const id = document.querySelector(".rowCheck:checked").dataset.id;
           selectedId = id;
           const c = contacts.find((x) => x.id == id);
-
+          
           modalName.value = c.name;
           modalPhone.value = c.phone;
           modalEmail.value = c.email;
@@ -262,15 +269,15 @@
           modalLocation.value = "";
         }
       }
-
+    
       function closeModal() {
         modal.classList.add("hidden");
       }
-
+      
       document.getElementById("btnNew").onclick = () => openModal(false);
       document.getElementById("btnEdit").onclick = () => openModal(true);
       document.getElementById("modalCancel").onclick = closeModal;
-
+      
       document.getElementById("modalSave").onclick = () => {
         const data = {
           name: modalName.value,
@@ -278,7 +285,7 @@
           email: modalEmail.value,
           location: modalLocation.value,
         };
-
+        
         if (selectedId) {
           const idx = contacts.findIndex((x) => x.id == selectedId);
           contacts[idx] = { id: selectedId, ...data };
@@ -286,56 +293,47 @@
         } else {
           contacts.push({ id: Date.now(), ...data });
         }
-
+        
+        saveContacts();
         closeModal();
         renderTable();
       };
 
       // Delete
       document.getElementById("btnDelete").onclick = () => {
-        const checked = [...document.querySelectorAll(".rowCheck:checked")].map(
-          (c) => c.dataset.id
-        );
-        contacts = contacts.filter((c) => !checked.includes(c.id.toString()));
-        renderTable();
-      };
+    const checkedIds = [...document.querySelectorAll(".rowCheck:checked")].map(
+      (c) => c.dataset.id
+    );
+
+    contacts = contacts.filter((c) => !checkedIds.includes(c.id.toString()));
+    saveContacts();
+    renderTable();
+  };
 
       // Search
       document.getElementById("btnSearch").onclick = () => {
-        const keyword = document
-          .getElementById("searchInput")
-          .value.toLowerCase();
+    const keyword = document
+      .getElementById("searchInput")
+      .value.toLowerCase();
 
-        const filtered = contacts.filter(
-          (c) =>
-            c.name.toLowerCase().includes(keyword) ||
-            c.phone.includes(keyword) ||
-            c.email.toLowerCase().includes(keyword) ||
-            c.location.toLowerCase().includes(keyword)
-        );
+    if (!keyword) {
+      renderTable();
+      return;
+    }
 
-        tableBody.innerHTML = "";
+    const filtered = contacts.filter(
+      (c) =>
+        c.name.toLowerCase().includes(keyword) ||
+        c.phone.includes(keyword) ||
+        c.email.toLowerCase().includes(keyword) ||
+        c.location.toLowerCase().includes(keyword)
+    );
 
-        if (filtered.length === 0) {
-          tableBody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-purple-500 italic">No matching results</td></tr>`;
-          return;
-        }
+    renderTable(filtered);
+  };
 
-        filtered.forEach((c) => {
-          const row = document.createElement("tr");
-          row.classList.add("hover:bg-purple-50", "transition");
+  renderTable();
 
-          row.innerHTML = `
-            <td class="p-3"><input type="checkbox" class="rowCheck" data-id="${c.id}"></td>
-            <td class="p-3">${c.name}</td>
-            <td class="p-3">${c.phone}</td>
-            <td class="p-3">${c.email}</td>
-            <td class="p-3">${c.location}</td>
-          `;
-
-          tableBody.appendChild(row);
-        });
-      };
     </script>
   </body>
 </html>

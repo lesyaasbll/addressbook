@@ -1,4 +1,4 @@
-const contacts = [
+let contacts = JSON.parse(localStorage.getItem("contacts")) || [
   {
     id: 1,
     name: "Lesya Salsabilla Putri",
@@ -15,8 +15,26 @@ const contacts = [
   },
 ];
 
+function saveContacts() {
+  localStorage.setItem("contacts", JSON.stringify(contacts));
+}
+
 // DISPLAY CONTACT
 function displayContacts() {
+  const tableBody = document.getElementById("contactsTableBody");
+  tableBody.innerHTML = "";
+
+  if (contacts.length === 0) {
+    tableBody.innerHTML = `
+      <tr>
+        <td colspan="5" class="p-4 text-center text-gray-500 italic">
+          No contacts available
+        </td>
+      </tr>
+    `;
+    return;
+  }
+
   for (const contact of contacts) {
     console.log(`
       🆔 : ${contact.id}
@@ -25,29 +43,42 @@ function displayContacts() {
       📍 : ${contact.location}
       ✉️ : ${contact.email}
     `);
+
+    tableBody.innerHTML += `
+      <tr class="border-b">
+        <td class="p-2">
+          <input type="checkbox">
+        </td>
+        <td class="p-2">${contact.name}</td>
+        <td class="p-2">${contact.email}</td>
+        <td class="p-2">${contact.phone}</td>
+        <td class="p-2">${contact.location}</td>
+      </tr>
+    `;
   }
 }
 
 // AUTO ID
 function getLastId() {
   if (contacts.length === 0) return 1;
-  const lastIndex = contacts.length - 1;
-  const lastContact = contacts[lastIndex];
-  return lastContact.id + 1;
+  return contacts[contacts.length - 1].id + 1;
 }
 
 // ADD CONTACT
 function addContact(name, phone, email, location) {
   contacts.push({
     id: getLastId(),
-    name: name,
-    phone: phone,
-    email: email,
-    location: location,
+    name,
+    phone,
+    email,
+    location,
   });
+
+  saveContacts();
+  displayContacts();
 }
 
-// SEARCH CONTACT (improved)
+// SEARCH CONTACT
 function searchContacts(keyword) {
   const filteredContacts = contacts.filter(
     (contact) =>
@@ -57,19 +88,32 @@ function searchContacts(keyword) {
       contact.phone.toString().includes(keyword)
   );
 
+  const tableBody = document.getElementById("contactsTableBody");
+  tableBody.innerHTML = "";
+
   if (filteredContacts.length === 0) {
-    console.log(`🔍 No contact found for keyword: ${keyword}`);
+    tableBody.innerHTML = `
+      <tr>
+        <td colspan="5" class="p-4 text-center text-gray-500 italic">
+          No contact found
+        </td>
+      </tr>
+    `;
     return;
   }
 
   for (const contact of filteredContacts) {
-    console.log(`
-      🆔 : ${contact.id}
-      🧑‍🦱 : ${contact.name}
-      📱 : ${contact.phone}
-      📍 : ${contact.location}
-      ✉️ : ${contact.email}
-    `);
+    tableBody.innerHTML += `
+      <tr class="border-b">
+        <td class="p-2">
+          <input type="checkbox">
+        </td>
+        <td class="p-2">${contact.name}</td>
+        <td class="p-2">${contact.email}</td>
+        <td class="p-2">${contact.phone}</td>
+        <td class="p-2">${contact.location}</td>
+      </tr>
+    `;
   }
 }
 
@@ -83,7 +127,8 @@ function deleteContact(id) {
   }
 
   contacts.splice(index, 1);
-  console.log(`🗑 Contact with ID ${id} has been deleted.`);
+  saveContacts();
+  displayContacts();
 }
 
 // UPDATE CONTACT
@@ -100,21 +145,13 @@ function updateContact(id, newData) {
   contact.email = newData.email ?? contact.email;
   contact.location = newData.location ?? contact.location;
 
-  console.log(`✏️ Contact with ID ${id} updated successfully.`);
+  saveContacts();
+  displayContacts();
 }
 
-// TESTING
-addContact("Baskara Putra", 6281234567890, "baskara@gmail.com", "Jakarta");
-addContact("Baskara Putra", 6281234567890, "baskara@gmail.com", "Jakarta");
+document.getElementById("searchInput").addEventListener("input", function () {
+  const keyword = this.value;
+  searchContacts(keyword);
+});
 
-console.log("🔍 Searching:");
-searchContacts("Baskara");
-
-console.log("✏️ Updating ID 1:");
-updateContact(1, { name: "Lesya SP", location: "Depok" });
-
-console.log("🗑 Deleting ID 2:");
-deleteContact(2);
-
-console.log("📋 Display All Contacts:");
 displayContacts();
